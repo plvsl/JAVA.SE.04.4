@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
 
-class Main {
+class MovieService {
     private static List<Movie> movies = new LinkedList<>();
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
@@ -20,17 +20,16 @@ class Main {
     }
 
     private static void saveToFile() throws IOException {
-        FileOutputStream fos = new FileOutputStream("temp.out");
-        try (ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("temp.out"))) {
             oos.writeObject(movies);
             oos.flush();
         }
     }
-
-    private static void loadFromFile() throws IOException, ClassNotFoundException {
+    
+    private static List<Movie> loadFromFile() throws IOException, ClassNotFoundException {
         FileInputStream fis = new FileInputStream("temp.out");
         ObjectInputStream oin = new ObjectInputStream(fis);
-        movies = (List)oin.readObject();
+        return (List) oin.readObject();
     }
 
     private static boolean addMovie(Movie movie) {
@@ -46,13 +45,13 @@ class Main {
     }
 
     private static void editMoviesName(int index, String name) {
-        getMovie(index).movieName = name;
+        getMovie(index).setMovieName(name);
     }
 
     private static void editMoviesActors(int index, String... actors) {
-        getMovie(index).actors.clear();
+        getMovie(index).clearActors();
         for (String actor : actors) {
-            getMovie(index).actors.add(actor);
+            getMovie(index).addActor(actor);
         }
     }
 
@@ -63,8 +62,8 @@ class Main {
 
     private static void showAllMoviesAndActors() {
         for (Movie movie : movies) {
-            System.out.println(movie.movieName);
-            for (String actor : movie.actors) {
+            System.out.println(movie.getMovieName());
+            for (String actor : movie.getActors()) {
                 System.out.println(actor);
             }
         }
